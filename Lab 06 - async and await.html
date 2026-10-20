@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Lab 06 — async and await</title>
+<link rel="stylesheet" href="lab06.css"></head><body>
+<header class="top"><h1>Lab 06 — async and await</h1><p>BSCS-F24-A · Ali Hafeez</p></header>
+<nav class="top"><a href="Lab 06 - Home.html">Home</a><a href="Lab 06 - The page must not wait.html">The page must not wait</a><a href="Lab 06 - Callbacks.html">Callbacks</a><a href="Lab 06 - Promises.html">Promises</a><a href="Lab 06 - async and await.html">async and await</a><a href="Lab 06 - The reply.html">The reply</a><a href="Lab 06 - Loading and several asks.html">Loading and several asks</a><a href="Lab 06 - Tasks.html">Tasks</a><a href="Lab 06 - 0 The shelf.html">0 The shelf</a><a href="Lab 06 - 1 The lookup.html">1 The lookup</a><a href="Lab 06 - 2 The order.html">2 The order</a></nav>
+<main>
+<h2 id='t30'>30 async returns a promise</h2>
+<p><strong>async</strong> — async on a function means the caller always receives a promise.</p>
+<pre><code>async function price() {
+  return 50;
+}
+const receipt = price();
+document.querySelector(&quot;#kind&quot;).textContent = String(receipt);
+receipt.then(function (n) {
+  document.querySelector(&quot;#value&quot;).textContent = String(n);
+});</code></pre>
+<p>You see The kind line is <code>[object Promise]</code>. The value line is <code>50</code>.</p>
+<p><strong>Second look.</strong> The caller does not receive 50. The caller receives a promise that will fulfil with 50.</p>
+<pre><code>&lt;p id=&quot;kind&quot;&gt;kind&lt;/p&gt;
+&lt;p id=&quot;value&quot;&gt;value&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+async function price() { return 50; }
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, function () {
+  const receipt = price();
+  document.querySelector(&quot;#kind&quot;).textContent = String(receipt);
+  receipt.then(function (n) {
+    document.querySelector(&quot;#value&quot;).textContent = String(n);
+  });
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t31'>31 return 50 is still a promise</h2>
+<p><strong>return</strong> — return 50 inside an async function fulfils the promise. It does not hand 50 back as a plain number.</p>
+<pre><code>async function price() {
+  return 50;
+}
+const receipt = price();
+document.querySelector(&quot;#out&quot;).textContent = String(receipt + 1);</code></pre>
+<p>You see <code>[object Promise]1</code>.</p>
+<p><strong>Second look.</strong> Adding 1 happens to the promise object. The 50 is inside it. This is the same trap as a missing await.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+async function price() {
+  return 50;
+}
+const receipt = price();
+document.querySelector(&quot;#out&quot;).textContent = String(receipt + 1);
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t32'>32 await parks this function</h2>
+<p><strong>await</strong> — await p pauses this function until p settles. The lines under await run after that.</p>
+<pre><code>document.querySelector(&quot;#out&quot;).textContent = &quot;Waiting&quot;;
+await new Promise(function (resolve) {
+  setTimeout(resolve, 800);
+});
+document.querySelector(&quot;#out&quot;).textContent = &quot;Done&quot;;</code></pre>
+<p>You see <code>Waiting</code>, then <code>Done</code>.</p>
+<p><strong>Second look.</strong> The pause is this function only. The click handler is parked at await. The rest of the page is not inside this function.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+document.querySelector(&quot;#out&quot;).textContent = &quot;Waiting&quot;;
+await new Promise(function (resolve) {
+  setTimeout(resolve, 800);
+});
+document.querySelector(&quot;#out&quot;).textContent = &quot;Done&quot;;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t33'>33 Clicks still work</h2>
+<p><strong>clicks</strong> — While one function is parked on await, another button&#x27;s function can run.</p>
+<pre><code>document.querySelector(&quot;#status&quot;).textContent = &quot;Waiting&quot;;
+await new Promise(function (resolve) {
+  setTimeout(resolve, 1500);
+});
+document.querySelector(&quot;#status&quot;).textContent = &quot;Done&quot;;</code></pre>
+<p>You see Click Start. The line says Waiting. Click Count twice. The count is 2 while the line still says Waiting. Then the line says Done.</p>
+<p><strong>Second look.</strong> await is not a frozen tab. The busy loop was a frozen tab. This button is parked, and Count is a different function.</p>
+<pre><code>&lt;p id=&quot;status&quot;&gt;Ready.&lt;/p&gt;
+&lt;p id=&quot;count&quot;&gt;0&lt;/p&gt;
+&lt;button id=&quot;start&quot; type=&quot;button&quot;&gt;Start&lt;/button&gt;
+&lt;button id=&quot;countup&quot; type=&quot;button&quot;&gt;Count&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#countup&quot;).addEventListener(&quot;click&quot;, function () {
+  const n = Number(document.querySelector(&quot;#count&quot;).textContent);
+  document.querySelector(&quot;#count&quot;).textContent = String(n + 1);
+});
+document.querySelector(&quot;#start&quot;).addEventListener(&quot;click&quot;, async function () {
+  document.querySelector(&quot;#status&quot;).textContent = &quot;Waiting&quot;;
+  await new Promise(function (resolve) { setTimeout(resolve, 1500); });
+  document.querySelector(&quot;#status&quot;).textContent = &quot;Done&quot;;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t34'>34 await belongs inside async</h2>
+<p><strong>async</strong> — await is legal inside an async function. On a plain function the script fails to load.</p>
+<pre><code>const script = document.createElement(&quot;script&quot;);
+script.textContent = &quot;function go(){ await 1; }&quot;;
+document.body.appendChild(script);</code></pre>
+<p>You see The line names await. The function go never runs.</p>
+<p><strong>Second look.</strong> A syntax error fails the whole script tag. Later listeners in that same tag are never stored.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+window.onerror = function (message) {
+  document.querySelector(&quot;#out&quot;).textContent = String(message);
+};
+const script = document.createElement(&quot;script&quot;);
+script.textContent = &quot;function go(){ await 1; }&quot;;
+document.body.appendChild(script);
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t35'>35 try and catch</h2>
+<p><strong>try</strong> — try / catch around await is the same job as .catch. A rejection jumps to catch.</p>
+<pre><code>try {
+  await Promise.reject(new Error(&quot;ruler&quot;));
+  document.querySelector(&quot;#out&quot;).textContent = &quot;then&quot;;
+} catch (err) {
+  document.querySelector(&quot;#out&quot;).textContent = err.message;
+}</code></pre>
+<p>You see <code>ruler</code>. The word then is not written.</p>
+<p><strong>Second look.</strong> The line under await does not run when the promise rejects. catch is the next place that runs.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+try {
+  await Promise.reject(new Error(&quot;ruler&quot;));
+  document.querySelector(&quot;#out&quot;).textContent = &quot;then&quot;;
+} catch (err) {
+  document.querySelector(&quot;#out&quot;).textContent = err.message;
+}
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t36'>36 The missing await</h2>
+<p><strong>missing await</strong> — Forgetting await does not throw. You still hold the promise.</p>
+<pre><code>const price = Promise.resolve(50);
+document.querySelector(&quot;#out&quot;).textContent = price + 1;</code></pre>
+<p>You see <code>[object Promise]1</code>.</p>
+<p><strong>Second look.</strong> The page looks calm. The console is not red. The bug is the missing word await.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+const price = Promise.resolve(50);
+document.querySelector(&quot;#out&quot;).textContent = price + 1;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t37'>37 The same line with await</h2>
+<p><strong>await</strong> — await takes the number out of the promise. Then plus is ordinary arithmetic.</p>
+<pre><code>const price = await Promise.resolve(50);
+document.querySelector(&quot;#out&quot;).textContent = String(price + 1);</code></pre>
+<p>You see <code>51</code>.</p>
+<p><strong>Second look.</strong> Same promise as the previous heading. The only added word is await.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;wrong&quot; type=&quot;button&quot;&gt;Missing await&lt;/button&gt;
+&lt;button id=&quot;right&quot; type=&quot;button&quot;&gt;With await&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#wrong&quot;).addEventListener(&quot;click&quot;, async function () {
+  const price = Promise.resolve(50);
+  document.querySelector(&quot;#out&quot;).textContent = price + 1;
+});
+document.querySelector(&quot;#right&quot;).addEventListener(&quot;click&quot;, async function () {
+  const price = await Promise.resolve(50);
+  document.querySelector(&quot;#out&quot;).textContent = String(price + 1);
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+</main>
+<nav class="end"><a href="Lab 06 - Promises.html">Previous · Promises</a><a href="Lab 06 - The reply.html">Next · The reply</a></nav>
+</body></html>

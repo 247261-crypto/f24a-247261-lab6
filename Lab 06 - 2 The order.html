@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Lab 06 — 2 The order</title>
+<link rel="stylesheet" href="lab06.css"></head><body>
+<header class="top"><h1>Lab 06 — 2 The order</h1><p>BSCS-F24-A · Ali Hafeez</p></header>
+<nav class="top"><a href="Lab 06 - Home.html">Home</a><a href="Lab 06 - The page must not wait.html">The page must not wait</a><a href="Lab 06 - Callbacks.html">Callbacks</a><a href="Lab 06 - Promises.html">Promises</a><a href="Lab 06 - async and await.html">async and await</a><a href="Lab 06 - The reply.html">The reply</a><a href="Lab 06 - Loading and several asks.html">Loading and several asks</a><a href="Lab 06 - Tasks.html">Tasks</a><a href="Lab 06 - 0 The shelf.html">0 The shelf</a><a href="Lab 06 - 1 The lookup.html">1 The lookup</a><a href="Lab 06 - 2 The order.html">2 The order</a></nav>
+<main>
+<p>This is project <strong>2</strong>. You build it when the last digit of your roll, divided by 3, leaves a remainder of 2. Digits 2, 5, and 8.</p>
+<p>A desk at your place. The ticket, the sheet, and the takings are three parts of the same desk. A person writes the item and how many, and sends it. The ticket shows the order number, the item, and the total the computer just sent. The sheet keeps every order. Count is how many rows are on the sheet. Takings is those totals added. Drop last removes the last row. When that row is the one on the ticket, the ticket goes blank. Ruler adds no row and leaves the ticket as it was. A quantity that is not a whole number from 1 upward does not send. A stopped computer adds no row and leaves the ticket and the takings as they were.</p>
+<p>This is <code>order.html</code>. Your place and your header colour come from the last digit of your roll. The place name is white.</p>
+<h2>The finished order</h2>
+<pre>order.html
+  header     your place, your colour, the name in white
+  status     id="status"     one sentence in the file
+  ticket     id="ticket"
+             id="ticket-id"      empty in the file
+             id="ticket-item"    empty in the file
+             id="ticket-total"   empty in the file
+  sheet      Order | Item | Qty | Total
+             id="sheet"          no rows in the file
+  figures    id="count"      starts at 0
+             id="takings"    starts at 0
+  form       id="order"
+             id="item"  name="item"
+             id="qty"   name="qty"
+             button id="send"    type submit
+             button id="drop"    Drop last
+  footer     your roll</pre>
+
+<h2>Topic 1 — The page</h2>
+<ul>
+<li>The page is <code>order.html</code> in <code>f24a-YOURROLL-lab6</code>.</li>
+<li>The heading is your place. The header uses your colour. The place name is white. The footer shows your roll.</li>
+<li>Commit with the message <code>2 The order — The page</code>.</li>
+</ul>
+
+<h2>Topic 2 — The ticket</h2>
+<ul>
+<li>Put a status line on the page. Its id is <code>status</code>. The file contains one sentence in that line.</li>
+<li>The ticket id is <code>ticket</code>. The order number id is <code>ticket-id</code>. The item id is <code>ticket-item</code>. The total id is <code>ticket-total</code>. All three are empty in the file.</li>
+<li>Commit with the message <code>2 The order — The ticket</code>.</li>
+</ul>
+
+<h2>Topic 3 — The sheet</h2>
+<ul>
+<li>The sheet headings are Order, Item, Qty, and Total. The body id is <code>sheet</code>. The file has no order rows.</li>
+<li>Count id is <code>count</code> and starts at 0. Takings id is <code>takings</code> and starts at 0.</li>
+<li>Commit with the message <code>2 The order — The sheet</code>.</li>
+</ul>
+
+<h2>Topic 4 — The form</h2>
+<ul>
+<li>The form id is <code>order</code>. The item box id is <code>item</code> and its name is <code>item</code>. The quantity box id is <code>qty</code> and its name is <code>qty</code>.</li>
+<li>Send is <code>send</code>, type submit. Drop last is <code>drop</code>, type button. The words on it are Drop last.</li>
+<li>Commit with the message <code>2 The order — The form</code>.</li>
+</ul>
+
+<h2>Topic 5 — The server file</h2>
+<ul>
+<li>Copy <code>server.js</code> into this folder. Do not change it.</li>
+<li>Run <code>node server.js</code>. Open <code>http://localhost:3016/order.html</code>.</li>
+<li>Commit with the message <code>2 The order — The server file</code>.</li>
+</ul>
+
+<h2>Topic 6 — Send is stored</h2>
+<ul>
+<li>Send is a submit listener on the form. Drop last is a click listener. Neither line calls its function. Loading the page adds no row.</li>
+<li>Send stays on this page. The address bar does not change.</li>
+<li>Commit with the message <code>2 The order — Send is stored</code>.</li>
+</ul>
+
+<h2>Topic 7 — A bad quantity</h2>
+<ul>
+<li>A quantity that is not a whole number from 1 upward does not send. The status line says not a number. The sheet, the ticket, Count, and Takings stay as they are.</li>
+<li>That check uses <code>setCustomValidity</code> with the message not a number, then <code>reportValidity</code>. A later good send clears that message with an empty string.</li>
+<li>Commit with the message <code>2 The order — A bad quantity</code>.</li>
+</ul>
+
+<h2>Topic 8 — Loading</h2>
+<ul>
+<li>A good quantity sets the status line to Loading… and Send stops taking clicks.</li>
+<li>Commit with the message <code>2 The order — Loading</code>.</li>
+</ul>
+
+<h2>Topic 9 — The ticket and the sheet</h2>
+<ul>
+<li>Restart the server so the first order number is 1. Send pen and 2.</li>
+<li>The status line says Order 1, total 100. The ticket shows 1, pen, and 100. The sheet has that row. Count shows 1. Takings shows 100.</li>
+<li>Send tea and 1. The ticket shows 2, tea, and 40. The sheet has both rows. Count shows 2. Takings shows 140.</li>
+<li>The digits 50, 80, 40, 100, and 140 are not written in <code>order.html</code>. They are not written in the page script. The prices stay inside <code>server.js</code>. Takings is the totals on the sheet added together.</li>
+<li>Commit with the message <code>2 The order — The ticket and the sheet</code>.</li>
+</ul>
+
+<h2>Topic 10 — Drop last</h2>
+<ul>
+<li>From the two rows above, Drop last removes tea. The sheet keeps pen, 2, 100. Count shows 1. Takings shows 100. The ticket is blank, because the dropped row was the one on the ticket.</li>
+<li>Drop last on an empty sheet changes nothing.</li>
+<li>Commit with the message <code>2 The order — Drop last</code>.</li>
+</ul>
+
+<h2>Topic 11 — A name that is not there</h2>
+<ul>
+<li>Send ruler and 1. The status line says ruler is not in the shop. The sheet does not grow. The ticket stays as it was. Count and Takings stay as they were.</li>
+<li>Commit with the message <code>2 The order — A name that is not there</code>.</li>
+</ul>
+
+<h2>Topic 12 — The computer is off</h2>
+<ul>
+<li>Stop <code>node</code>. Send pen and 1.</li>
+<li>The status line says The server is not answering. The sheet does not grow. The ticket, Count, and Takings stay as they were.</li>
+<li>Commit with the message <code>2 The order — The computer is off</code>.</li>
+</ul>
+
+<h2>Topic 13 — The button comes back</h2>
+<ul>
+<li>After a row is added, Send takes a click again.</li>
+<li>After ruler, Send takes a click again.</li>
+<li>After the computer is off, Send takes a click again.</li>
+<li>Commit with the message <code>2 The order — The button comes back</code>.</li>
+</ul>
+
+<h2>Topic 14 — The sentence in the file</h2>
+<ul>
+<li>Refresh brings that sentence back. The ticket is empty. The sheet is empty. Count is 0. Takings is 0.</li>
+<li>Commit with the message <code>2 The order — The sentence in the file</code>.</li>
+</ul>
+</main>
+<nav class="end"><a href="Lab 06 - 1 The lookup.html">Previous · 1 The lookup</a><span class="off">Next</span></nav>
+</body></html>

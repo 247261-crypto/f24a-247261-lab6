@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Lab 06 — The page must not wait</title>
+<link rel="stylesheet" href="lab06.css"></head><body>
+<header class="top"><h1>Lab 06 — The page must not wait</h1><p>BSCS-F24-A · Ali Hafeez</p></header>
+<nav class="top"><a href="Lab 06 - Home.html">Home</a><a href="Lab 06 - The page must not wait.html">The page must not wait</a><a href="Lab 06 - Callbacks.html">Callbacks</a><a href="Lab 06 - Promises.html">Promises</a><a href="Lab 06 - async and await.html">async and await</a><a href="Lab 06 - The reply.html">The reply</a><a href="Lab 06 - Loading and several asks.html">Loading and several asks</a><a href="Lab 06 - Tasks.html">Tasks</a><a href="Lab 06 - 0 The shelf.html">0 The shelf</a><a href="Lab 06 - 1 The lookup.html">1 The lookup</a><a href="Lab 06 - 2 The order.html">2 The order</a></nav>
+<main>
+<h2 id='t01'>01 A busy loop freezes the page</h2>
+<p><strong>busy loop</strong> — JavaScript runs this loop and does nothing else until the clock passes the end.</p>
+<pre><code>const end = Date.now() + 1500;
+while (Date.now() &lt; end) {}</code></pre>
+<p>You see Frozen. Count does nothing. Then the line says Done.</p>
+<p><strong>Second look.</strong> A request does not freeze the page. The browser keeps the network. A loop in your own file is what locks the tab.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;p id=&quot;count&quot;&gt;0&lt;/p&gt;
+&lt;button id=&quot;countup&quot; type=&quot;button&quot;&gt;Count&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#countup&quot;).addEventListener(&quot;click&quot;, function () {
+  const n = Number(document.querySelector(&quot;#count&quot;).textContent);
+  document.querySelector(&quot;#count&quot;).textContent = String(n + 1);
+});
+&lt;/script&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+document.querySelector(&quot;#out&quot;).textContent = &quot;Frozen&quot;;
+setTimeout(function () {
+  const end = Date.now() + 1500;
+  while (Date.now() &lt; end) {}
+  document.querySelector(&quot;#out&quot;).textContent = &quot;Done&quot;;
+}, 40);
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t02'>02 One line at a time</h2>
+<p><strong>one line</strong> — One line runs. The next line waits until that line has finished.</p>
+<pre><code>document.querySelector(&quot;#out&quot;).textContent = &quot;1&quot;;
+document.querySelector(&quot;#out&quot;).textContent += &quot; 2&quot;;
+document.querySelector(&quot;#out&quot;).textContent += &quot; 3&quot;;</code></pre>
+<p>You see <code>1 2 3</code> in one step. The line never sits on 1 while 2 waits.</p>
+<p><strong>Second look.</strong> There is no second cashier inside your function. The three writes happen, then the page paints.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+document.querySelector(&quot;#out&quot;).textContent = &quot;1&quot;;
+document.querySelector(&quot;#out&quot;).textContent += &quot; 2&quot;;
+document.querySelector(&quot;#out&quot;).textContent += &quot; 3&quot;;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t03'>03 The browser keeps the clock</h2>
+<p><strong>timer</strong> — You hand a function and a delay to the browser. The browser keeps the clock. Your next line runs at once.</p>
+<pre><code>setTimeout(function () {
+  document.querySelector(&quot;#out&quot;).textContent += &quot; · later&quot;;
+}, 400);
+document.querySelector(&quot;#out&quot;).textContent = &quot;now&quot;;</code></pre>
+<p>You see <code>now</code>, then <code>now · later</code>.</p>
+<p><strong>Second look.</strong> The timer does not pause the function. The word now is written while the clock is still running.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+setTimeout(function () {
+  document.querySelector(&quot;#out&quot;).textContent += &quot; · later&quot;;
+}, 400);
+document.querySelector(&quot;#out&quot;).textContent = &quot;now&quot;;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t04'>04 The browser keeps the network</h2>
+<p><strong>request</strong> — fetch hands the request to the browser. The next line runs before the reply arrives.</p>
+<pre><code>document.querySelector(&quot;#out&quot;).textContent = &quot;asked&quot;;
+const response = await fetch(&quot;/api/price?item=pen&quot;);
+const data = await response.json();
+document.querySelector(&quot;#out&quot;).textContent = &quot;asked · &quot; + data.item + &quot; &quot; + data.price;</code></pre>
+<p>You see <code>asked</code>, then <code>asked · pen 50</code>. Start the server. Open this page from localhost.</p>
+<p><strong>Second look.</strong> The wait belongs to the browser. Your function parked at await. The line asked was already on the page.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+document.querySelector(&quot;#out&quot;).textContent = &quot;asked&quot;;
+const response = await fetch(&quot;/api/price?item=pen&quot;);
+const data = await response.json();
+document.querySelector(&quot;#out&quot;).textContent = &quot;asked · &quot; + data.item + &quot; &quot; + data.price;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t05'>05 setTimeout runs later</h2>
+<p><strong>setTimeout</strong> — setTimeout(fn, ms) runs fn no sooner than ms milliseconds from now.</p>
+<pre><code>setTimeout(function () {
+  document.querySelector(&quot;#out&quot;).textContent = &quot;later&quot;;
+}, 400);</code></pre>
+<p>You see <code>later</code> after a short wait. The click itself does not write later.</p>
+<p><strong>Second look.</strong> 400 is the earliest time, not a promise of the exact millisecond. A busy page can run fn a little after that.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+setTimeout(function () { document.querySelector(&quot;#out&quot;).textContent = &quot;later&quot;; }, 400);
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t06'>06 The line under the timer runs now</h2>
+<p><strong>next line</strong> — The line under setTimeout is not inside the timer. It runs before the timer function.</p>
+<pre><code>setTimeout(function () {
+  document.querySelector(&quot;#out&quot;).textContent += &quot; B&quot;;
+}, 300);
+document.querySelector(&quot;#out&quot;).textContent = &quot;A&quot;;</code></pre>
+<p>You see <code>A</code>, then <code>A B</code>.</p>
+<p><strong>Second look.</strong> People read the file top to bottom and expect B first. The call schedules B. The write of A is the next real line.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+setTimeout(function () { document.querySelector(&quot;#out&quot;).textContent += &quot; B&quot;; }, 300);
+document.querySelector(&quot;#out&quot;).textContent = &quot;A&quot;;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t07'>07 A delay of zero</h2>
+<p><strong>zero</strong> — setTimeout(fn, 0) still runs fn later. Zero means after the current code finishes.</p>
+<pre><code>setTimeout(function () {
+  document.querySelector(&quot;#out&quot;).textContent += &quot; · zero&quot;;
+}, 0);
+document.querySelector(&quot;#out&quot;).textContent = &quot;after&quot;;</code></pre>
+<p>You see <code>after</code>, then <code>after · zero</code>.</p>
+<p><strong>Second look.</strong> Zero does not mean now. The current function gets to the end. Then the queued function runs.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+setTimeout(function () { document.querySelector(&quot;#out&quot;).textContent += &quot; · zero&quot;; }, 0);
+document.querySelector(&quot;#out&quot;).textContent = &quot;after&quot;;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t08'>08 The shorter timer finishes first</h2>
+<p><strong>shorter</strong> — Two timers run on the browser clock. The one with the smaller delay is ready first.</p>
+<pre><code>setTimeout(function () {
+  document.querySelector(&quot;#out&quot;).textContent += &quot; slow&quot;;
+}, 600);
+setTimeout(function () {
+  document.querySelector(&quot;#out&quot;).textContent = &quot;fast&quot;;
+}, 200);</code></pre>
+<p>You see <code>fast</code>, then <code>fast slow</code>.</p>
+<p><strong>Second look.</strong> The order in the file is slow, then fast. The order on the page is the order the clock finishes.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+setTimeout(function () { document.querySelector(&quot;#out&quot;).textContent += &quot; slow&quot;; }, 600);
+setTimeout(function () { document.querySelector(&quot;#out&quot;).textContent = &quot;fast&quot;; }, 200);
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t09'>09 Finished jobs wait in a queue</h2>
+<p><strong>queue</strong> — When a timer finishes, its function joins a queue. The queue runs after the current code.</p>
+<pre><code>document.querySelector(&quot;#out&quot;).textContent = &quot;start&quot;;
+setTimeout(function () {
+  document.querySelector(&quot;#out&quot;).textContent += &quot; 1&quot;;
+}, 0);
+setTimeout(function () {
+  document.querySelector(&quot;#out&quot;).textContent += &quot; 2&quot;;
+}, 0);
+setTimeout(function () {
+  document.querySelector(&quot;#out&quot;).textContent += &quot; 3&quot;;
+}, 0);</code></pre>
+<p>You see <code>start</code>, then <code>start 1 2 3</code>.</p>
+<p><strong>Second look.</strong> Three delays of zero still wait. They run in the order they were queued, after start is on the page.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+document.querySelector(&quot;#out&quot;).textContent = &quot;start&quot;;
+setTimeout(function () { document.querySelector(&quot;#out&quot;).textContent += &quot; 1&quot;; }, 0);
+setTimeout(function () { document.querySelector(&quot;#out&quot;).textContent += &quot; 2&quot;; }, 0);
+setTimeout(function () { document.querySelector(&quot;#out&quot;).textContent += &quot; 3&quot;; }, 0);
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t10'>10 Predict the print order</h2>
+<p><strong>order</strong> — Read the lines that run now. Then read the lines that were queued.</p>
+<pre><code>document.querySelector(&quot;#out&quot;).textContent = &quot;A&quot;;
+setTimeout(function () {
+  document.querySelector(&quot;#out&quot;).textContent += &quot; B&quot;;
+}, 0);
+document.querySelector(&quot;#out&quot;).textContent += &quot; C&quot;;</code></pre>
+<p>You see <code>A C</code>, then <code>A C B</code>.</p>
+<p><strong>Second look.</strong> B was scheduled first in the file and printed last. C is under the timer, so C is part of the current run.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+document.querySelector(&quot;#out&quot;).textContent = &quot;A&quot;;
+setTimeout(function () { document.querySelector(&quot;#out&quot;).textContent += &quot; B&quot;; }, 0);
+document.querySelector(&quot;#out&quot;).textContent += &quot; C&quot;;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+</main>
+<nav class="end"><a href="Lab 06 - Home.html">Previous · Home</a><a href="Lab 06 - Callbacks.html">Next · Callbacks</a></nav>
+</body></html>

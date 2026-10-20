@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Lab 06 — Loading and several asks</title>
+<link rel="stylesheet" href="lab06.css"></head><body>
+<header class="top"><h1>Lab 06 — Loading and several asks</h1><p>BSCS-F24-A · Ali Hafeez</p></header>
+<nav class="top"><a href="Lab 06 - Home.html">Home</a><a href="Lab 06 - The page must not wait.html">The page must not wait</a><a href="Lab 06 - Callbacks.html">Callbacks</a><a href="Lab 06 - Promises.html">Promises</a><a href="Lab 06 - async and await.html">async and await</a><a href="Lab 06 - The reply.html">The reply</a><a href="Lab 06 - Loading and several asks.html">Loading and several asks</a><a href="Lab 06 - Tasks.html">Tasks</a><a href="Lab 06 - 0 The shelf.html">0 The shelf</a><a href="Lab 06 - 1 The lookup.html">1 The lookup</a><a href="Lab 06 - 2 The order.html">2 The order</a></nav>
+<main>
+<h2 id='t48'>48 The line says Loading</h2>
+<p><strong>Loading</strong> — Write Loading… before the await. Write the price when the body arrives.</p>
+<pre><code>document.querySelector(&quot;#out&quot;).textContent = &quot;Loading…&quot;;
+const response = await fetch(&quot;/api/price?item=pen&quot;);
+const data = await response.json();
+document.querySelector(&quot;#out&quot;).textContent = data.item + &quot;: Rs &quot; + data.price;</code></pre>
+<p>You see <code>Loading…</code>, then <code>pen: Rs 50</code>.</p>
+<p><strong>Second look.</strong> If you write the price first and the loading text after, the loading text is what stays.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+document.querySelector(&quot;#out&quot;).textContent = &quot;Loading…&quot;;
+const response = await fetch(&quot;/api/price?item=pen&quot;);
+const data = await response.json();
+document.querySelector(&quot;#out&quot;).textContent = data.item + &quot;: Rs &quot; + data.price;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t49'>49 The button goes quiet</h2>
+<p><strong>disabled</strong> — disabled = true stops another click while the request is out. The button paints grey.</p>
+<pre><code>const button = document.querySelector(&quot;#go&quot;);
+button.disabled = true;
+document.querySelector(&quot;#out&quot;).textContent = &quot;Loading…&quot;;
+const response = await fetch(&quot;/api/price?item=pen&quot;);
+const data = await response.json();
+document.querySelector(&quot;#out&quot;).textContent = data.item + &quot;: Rs &quot; + data.price;
+button.disabled = false;</code></pre>
+<p>You see <code>pen: Rs 50</code>, and the button takes a click again.</p>
+<p><strong>Second look.</strong> Leaving disabled true on the success path only is the bug in the next headings. A failure must enable it too.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+const button = document.querySelector(&quot;#go&quot;);
+button.disabled = true;
+document.querySelector(&quot;#out&quot;).textContent = &quot;Loading…&quot;;
+const response = await fetch(&quot;/api/price?item=pen&quot;);
+const data = await response.json();
+document.querySelector(&quot;#out&quot;).textContent = data.item + &quot;: Rs &quot; + data.price;
+button.disabled = false;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t50'>50 finally after a success</h2>
+<p><strong>finally</strong> — finally runs after try when the lines in try finish.</p>
+<pre><code>const button = document.querySelector(&quot;#go&quot;);
+button.disabled = true;
+try {
+  const response = await fetch(&quot;/api/price?item=pen&quot;);
+  const data = await response.json();
+  document.querySelector(&quot;#out&quot;).textContent = data.item + &quot;: Rs &quot; + data.price;
+} finally {
+  button.disabled = false;
+}</code></pre>
+<p>You see <code>pen: Rs 50</code>. The button is enabled.</p>
+<p><strong>Second look.</strong> The price is written in try. The button is enabled in finally. Those are two different jobs.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+const button = document.querySelector(&quot;#go&quot;);
+button.disabled = true;
+try {
+  const response = await fetch(&quot;/api/price?item=pen&quot;);
+  const data = await response.json();
+  document.querySelector(&quot;#out&quot;).textContent = data.item + &quot;: Rs &quot; + data.price;
+} finally {
+  button.disabled = false;
+}
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t51'>51 finally after a failure</h2>
+<p><strong>finally</strong> — finally also runs when catch runs.</p>
+<pre><code>const button = document.querySelector(&quot;#go&quot;);
+button.disabled = true;
+try {
+  await fetch(&quot;http://127.0.0.1:9/api/price?item=pen&quot;);
+} catch (err) {
+  document.querySelector(&quot;#out&quot;).textContent = &quot;The server is not answering&quot;;
+} finally {
+  button.disabled = false;
+}</code></pre>
+<p>You see <code>The server is not answering</code>. The button takes a click again.</p>
+<p><strong>Second look.</strong> Put the enable only under the price line, and this failure leaves the button dead.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+const button = document.querySelector(&quot;#go&quot;);
+button.disabled = true;
+try {
+  await fetch(&quot;http://127.0.0.1:9/api/price?item=pen&quot;);
+} catch (err) {
+  document.querySelector(&quot;#out&quot;).textContent = &quot;The server is not answering&quot;;
+} finally {
+  button.disabled = false;
+}
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t52'>52 A return still runs finally</h2>
+<p><strong>return</strong> — return inside try leaves the function, and finally still runs before the function is gone.</p>
+<pre><code>try {
+  return;
+} finally {
+  document.querySelector(&quot;#out&quot;).textContent = &quot;finally ran&quot;;
+}</code></pre>
+<p>You see <code>finally ran</code>.</p>
+<p><strong>Second look.</strong> A return after a 404 still passes through finally. That is why the button comes back on the not-in-the-shop path.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+try {
+  return;
+} finally {
+  document.querySelector(&quot;#out&quot;).textContent = &quot;finally ran&quot;;
+}
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t53'>53 Three awaits in a row</h2>
+<p><strong>in a row</strong> — await, then another await, then another. The second request starts when the first reply is in.</p>
+<pre><code>const names = [&quot;pen&quot;, &quot;copy&quot;, &quot;tea&quot;];
+const started = Date.now();
+const lines = [];
+for (let i = 0; i &lt; names.length; i++) {
+  const response = await fetch(&quot;/api/price?item=&quot; + names[i]);
+  const data = await response.json();
+  lines.push(data.item + &quot; &quot; + data.price);
+}
+const ms = Date.now() - started;
+document.querySelector(&quot;#out&quot;).textContent = lines.join(&quot; · &quot;) + &quot; · &quot; + ms + &quot; ms&quot;;</code></pre>
+<p>You see <code>pen 50 · copy 80 · tea 40</code> and a time around three seconds.</p>
+<p><strong>Second look.</strong> Each price waits out its own 800 milliseconds. Three in a row add up.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+const names = [&quot;pen&quot;, &quot;copy&quot;, &quot;tea&quot;];
+const started = Date.now();
+const lines = [];
+for (let i = 0; i &lt; names.length; i++) {
+  const response = await fetch(&quot;/api/price?item=&quot; + names[i]);
+  const data = await response.json();
+  lines.push(data.item + &quot; &quot; + data.price);
+}
+const ms = Date.now() - started;
+document.querySelector(&quot;#out&quot;).textContent = lines.join(&quot; · &quot;) + &quot; · &quot; + ms + &quot; ms&quot;;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t54'>54 Promise.all</h2>
+<p><strong>Promise.all</strong> — Promise.all takes a list of promises and fulfils when all of them fulfil.</p>
+<pre><code>const names = [&quot;pen&quot;, &quot;copy&quot;, &quot;tea&quot;];
+const started = Date.now();
+const responses = await Promise.all(names.map(function (name) {
+  return fetch(&quot;/api/price?item=&quot; + name);
+}));
+const lines = [];
+for (let i = 0; i &lt; responses.length; i++) {
+  const data = await responses[i].json();
+  lines.push(data.item + &quot; &quot; + data.price);
+}
+const ms = Date.now() - started;
+document.querySelector(&quot;#out&quot;).textContent = lines.join(&quot; · &quot;) + &quot; · &quot; + ms + &quot; ms&quot;;</code></pre>
+<p>You see <code>pen 50 · copy 80 · tea 40</code> and a time around one second.</p>
+<p><strong>Second look.</strong> The three requests are out together. The page waits for the slowest one, then reads the bodies.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+const names = [&quot;pen&quot;, &quot;copy&quot;, &quot;tea&quot;];
+const started = Date.now();
+const responses = await Promise.all(names.map(function (name) {
+  return fetch(&quot;/api/price?item=&quot; + name);
+}));
+const lines = [];
+for (let i = 0; i &lt; responses.length; i++) {
+  const data = await responses[i].json();
+  lines.push(data.item + &quot; &quot; + data.price);
+}
+const ms = Date.now() - started;
+document.querySelector(&quot;#out&quot;).textContent = lines.join(&quot; · &quot;) + &quot; · &quot; + ms + &quot; ms&quot;;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t55'>55 The wait is the slowest one</h2>
+<p><strong>slowest</strong> — Promise.all finishes when the slower promise finishes, not when the faster one does, and not at the sum.</p>
+<pre><code>const started = Date.now();
+await Promise.all([
+  new Promise(function (resolve) { setTimeout(resolve, 200); }),
+  new Promise(function (resolve) { setTimeout(resolve, 700); })
+]);
+document.querySelector(&quot;#out&quot;).textContent = String(Date.now() - started) + &quot; ms&quot;;</code></pre>
+<p>You see A time near 700 ms, not near 900 ms.</p>
+<p><strong>Second look.</strong> The 200 millisecond timer is done and waiting. all cannot finish until the 700 millisecond timer finishes.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+const started = Date.now();
+await Promise.all([
+  new Promise(function (resolve) { setTimeout(resolve, 200); }),
+  new Promise(function (resolve) { setTimeout(resolve, 700); })
+]);
+document.querySelector(&quot;#out&quot;).textContent = String(Date.now() - started) + &quot; ms&quot;;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t56'>56 allSettled keeps every result</h2>
+<p><strong>allSettled</strong> — Promise.allSettled waits for every promise, including one that rejects. Each result has a status.</p>
+<pre><code>const good = Promise.resolve(50);
+const missing = Promise.reject(new Error(&quot;ruler&quot;));
+const other = Promise.resolve(40);
+const rows = await Promise.allSettled([good, missing, other]);
+document.querySelector(&quot;#out&quot;).textContent = rows.map(function (row) {
+  if (row.status === &quot;fulfilled&quot;) return row.status + &quot; &quot; + row.value;
+  return row.status + &quot; &quot; + row.reason.message;
+}).join(&quot; · &quot;);</code></pre>
+<p>You see <code>fulfilled 50 · rejected ruler · fulfilled 40</code>.</p>
+<p><strong>Second look.</strong> The rejection of ruler does not throw away 50 and 40. You still have to read each status.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+const good = Promise.resolve(50);
+const missing = Promise.reject(new Error(&quot;ruler&quot;));
+const other = Promise.resolve(40);
+const rows = await Promise.allSettled([good, missing, other]);
+document.querySelector(&quot;#out&quot;).textContent = rows.map(function (row) {
+  if (row.status === &quot;fulfilled&quot;) return row.status + &quot; &quot; + row.value;
+  return row.status + &quot; &quot; + row.reason.message;
+}).join(&quot; · &quot;);
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t57'>57 Promise.all stops at the first failure</h2>
+<p><strong>Promise.all</strong> — Promise.all rejects as soon as one promise rejects. catch receives that error. The other values are not passed to then.</p>
+<pre><code>Promise.all([
+  Promise.resolve(50),
+  Promise.reject(new Error(&quot;ruler&quot;)),
+  Promise.resolve(40)
+]).then(function () {
+  document.querySelector(&quot;#out&quot;).textContent = &quot;then&quot;;
+}).catch(function (err) {
+  document.querySelector(&quot;#out&quot;).textContent = err.message;
+});</code></pre>
+<p>You see <code>ruler</code>. The word then is not written.</p>
+<p><strong>Second look.</strong> fetch fulfils on 404, so Promise.all of three fetches still fulfils when one item is missing. A throw inside the mapper is what rejects all.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+Promise.all([
+  Promise.resolve(50),
+  Promise.reject(new Error(&quot;ruler&quot;)),
+  Promise.resolve(40)
+]).then(function () {
+  document.querySelector(&quot;#out&quot;).textContent = &quot;then&quot;;
+}).catch(function (err) {
+  document.querySelector(&quot;#out&quot;).textContent = err.message;
+});
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t58'>58 POST</h2>
+<p><strong>POST</strong> — The second argument of fetch sets the method. POST sends a body. GET does not.</p>
+<pre><code>const response = await fetch(&quot;/api/orders&quot;, {
+  method: &quot;POST&quot;,
+  headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+  body: JSON.stringify({ item: &quot;pen&quot;, qty: 2 })
+});
+document.querySelector(&quot;#out&quot;).textContent = String(response.status);</code></pre>
+<p>You see <code>201</code>.</p>
+<p><strong>Second look.</strong> Leaving the method off sends GET. This server answers 404 for GET on /api/orders.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+const response = await fetch(&quot;/api/orders&quot;, {
+  method: &quot;POST&quot;,
+  headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+  body: JSON.stringify({ item: &quot;pen&quot;, qty: 2 })
+});
+document.querySelector(&quot;#out&quot;).textContent = String(response.status);
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t59'>59 JSON.stringify</h2>
+<p><strong>JSON.stringify</strong> — JSON.stringify turns an object into text. The body of the request is that text.</p>
+<pre><code>const text = JSON.stringify({ item: &quot;pen&quot;, qty: 2 });
+document.querySelector(&quot;#out&quot;).textContent = text;</code></pre>
+<p>You see <code>{&quot;item&quot;:&quot;pen&quot;,&quot;qty&quot;:2}</code>.</p>
+<p><strong>Second look.</strong> The object in the file is not what travels. The string is what travels.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+document.querySelector(&quot;#out&quot;).textContent = JSON.stringify({ item: &quot;pen&quot;, qty: 2 });
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t60'>60 A body that is not a string</h2>
+<p><strong>body</strong> — A plain object in the body slot becomes the text [object Object]. The server cannot read a quantity in that text.</p>
+<pre><code>const response = await fetch(&quot;/api/orders&quot;, {
+  method: &quot;POST&quot;,
+  headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+  body: { item: &quot;pen&quot;, qty: 2 }
+});
+document.querySelector(&quot;#out&quot;).textContent = String(response.status);</code></pre>
+<p>You see <code>400</code>.</p>
+<p><strong>Second look.</strong> JSON.stringify is the line that sends the object as JSON text. Without that line the status is not 201.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+const response = await fetch(&quot;/api/orders&quot;, {
+  method: &quot;POST&quot;,
+  headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+  body: { item: &quot;pen&quot;, qty: 2 }
+});
+document.querySelector(&quot;#out&quot;).textContent = String(response.status);
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t61'>61 201 and the total</h2>
+<p><strong>201</strong> — Status 201 means the server created the order. The total in the body is price times quantity.</p>
+<pre><code>const response = await fetch(&quot;/api/orders&quot;, {
+  method: &quot;POST&quot;,
+  headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+  body: JSON.stringify({ item: &quot;pen&quot;, qty: 2 })
+});
+const data = await response.json();
+document.querySelector(&quot;#out&quot;).textContent = response.status + &quot; · &quot; + data.total;</code></pre>
+<p>You see <code>201 · 100</code>.</p>
+<p><strong>Second look.</strong> 100 is the computer&#x27;s total. The page reads data.total. It does not multiply 50 by 2 in this file.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;go&quot; type=&quot;button&quot;&gt;Go&lt;/button&gt;
+&lt;script&gt;
+document.querySelector(&quot;#go&quot;).addEventListener(&quot;click&quot;, async function () {
+const response = await fetch(&quot;/api/orders&quot;, {
+  method: &quot;POST&quot;,
+  headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+  body: JSON.stringify({ item: &quot;pen&quot;, qty: 2 })
+});
+const data = await response.json();
+document.querySelector(&quot;#out&quot;).textContent = response.status + &quot; · &quot; + data.total;
+});
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+<h2 id='t62'>62 The whole ask</h2>
+<p><strong>together</strong> — One async function writes Loading…, checks ok, reads the body, and catch writes the silence.</p>
+<pre><code>const status = document.querySelector(&quot;#out&quot;);
+status.textContent = &quot;Loading…&quot;;
+try {
+  const response = await fetch(&quot;/api/price?item=pen&quot;);
+  if (!response.ok) {
+    status.textContent = &quot;pen is not in the shop&quot;;
+    return;
+  }
+  const data = await response.json();
+  status.textContent = data.item + &quot;: Rs &quot; + data.price;
+} catch (err) {
+  status.textContent = &quot;The server is not answering&quot;;
+}</code></pre>
+<p>You see Pen shows <code>pen: Rs 50</code>. Ruler shows <code>ruler is not in the shop</code>.</p>
+<p><strong>Second look.</strong> This file is the teaching example. The three projects are not this file.</p>
+<pre><code>&lt;p id=&quot;out&quot;&gt;Ready.&lt;/p&gt;
+&lt;button id=&quot;pen&quot; type=&quot;button&quot;&gt;Pen&lt;/button&gt;
+&lt;button id=&quot;ruler&quot; type=&quot;button&quot;&gt;Ruler&lt;/button&gt;
+&lt;script&gt;
+async function load(item) {
+  const status = document.querySelector(&quot;#out&quot;);
+  status.textContent = &quot;Loading…&quot;;
+  try {
+    const response = await fetch(&quot;/api/price?item=&quot; + item);
+    if (!response.ok) {
+      status.textContent = item + &quot; is not in the shop&quot;;
+      return;
+    }
+    const data = await response.json();
+    status.textContent = data.item + &quot;: Rs &quot; + data.price;
+  } catch (err) {
+    status.textContent = &quot;The server is not answering&quot;;
+  }
+}
+document.querySelector(&quot;#pen&quot;).addEventListener(&quot;click&quot;, function () { load(&quot;pen&quot;); });
+document.querySelector(&quot;#ruler&quot;).addEventListener(&quot;click&quot;, function () { load(&quot;ruler&quot;); });
+&lt;/script&gt;</code></pre>
+<hr class='section'>
+</main>
+<nav class="end"><a href="Lab 06 - The reply.html">Previous · The reply</a><a href="Lab 06 - Tasks.html">Next · Tasks</a></nav>
+</body></html>

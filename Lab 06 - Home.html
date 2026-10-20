@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Lab 06 — Home</title>
+<link rel="stylesheet" href="lab06.css"></head><body>
+<header class="top"><h1>Lab 06 — Home</h1><p>BSCS-F24-A · Ali Hafeez</p></header>
+<nav class="top"><a href="Lab 06 - Home.html">Home</a><a href="Lab 06 - The page must not wait.html">The page must not wait</a><a href="Lab 06 - Callbacks.html">Callbacks</a><a href="Lab 06 - Promises.html">Promises</a><a href="Lab 06 - async and await.html">async and await</a><a href="Lab 06 - The reply.html">The reply</a><a href="Lab 06 - Loading and several asks.html">Loading and several asks</a><a href="Lab 06 - Tasks.html">Tasks</a><a href="Lab 06 - 0 The shelf.html">0 The shelf</a><a href="Lab 06 - 1 The lookup.html">1 The lookup</a><a href="Lab 06 - 2 The order.html">2 The order</a></nav>
+<main>
+<p class='line'><strong>Instructor:</strong> Ali Hafeez</p>
+<p class='line'><strong>This laboratory:</strong> one project. Divide the last digit of your roll by 3. The remainder is your project number. The page asks this machine for data. The prices are not written in the file.</p>
+<p class='line'><strong>Next laboratory:</strong> React components and props. Do not open that today.</p>
+<p>One student, one repository. Folder and repository name: <code>f24a-YOURROLL-lab6</code>. This is a <strong>new</strong> folder. Do not put these files inside <code>lab5</code>.</p>
+<p>Your place and your header colour come from the last digit of your roll.</p>
+<table class='attrs'><tr><th>Last digit</th><th>Shop</th><th>Header colour</th></tr><tr><td>0</td><td>Bookshop</td><td>navy</td></tr><tr><td>1</td><td>Canteen</td><td>green</td></tr><tr><td>2</td><td>Print shop</td><td>maroon</td></tr><tr><td>3</td><td>Stationery</td><td>teal</td></tr><tr><td>4</td><td>Sports shop</td><td>purple</td></tr><tr><td>5</td><td>Bus office</td><td>olive</td></tr><tr><td>6</td><td>Fee counter</td><td>brown</td></tr><tr><td>7</td><td>Hostel store</td><td>crimson</td></tr><tr><td>8</td><td>Clinic</td><td>darkgreen</td></tr><tr><td>9</td><td>Uniform shop</td><td>steelblue</td></tr></table>
+<hr class='section'>
+<h2>How to submit</h2>
+<p>This is separate from the teaching. Read it before you start the tasks.</p>
+<p>You will make <strong>one</strong> GitHub repository named <code>f24a-YOURROLL-lab6</code>. One page lives in that folder. The file name is on your project. You still do the work in Git during the lab.</p>
+<p>Copy <code>server.js</code> from the session folder into that same folder. Do not change <code>server.js</code>. In that folder, run:</p>
+<pre><code>node server.js</code></pre>
+<p>The terminal prints <code>http://localhost:3016/</code>. Open your page from that address. A page opened from the folder icon cannot ask the store computer.</p>
+<p>Your project number is on <strong>Tasks</strong>. The three projects sit on the session bar after Tasks. Open the one with your number.</p>
+<p>The last hour is the work at your PC. The instructor marks that work in the room.</p>
+<p>Save <code>report.docx</code>. Your name, your roll number, this lab’s title, your project number, what you finished in your words, and one screenshot of your page showing the check on your project. You do not commit <code>report.docx</code>.</p>
+<p>The work is marked in the room on Friday. Upload <code>YourName-YourRoll.docx</code> on the Classroom Assignment <strong>Lab 06 — A page that waits</strong> by <strong>Wednesday 21 October 2026, 16:00</strong>. This class uses Classroom, not a Drive folder.</p>
+<p><strong>After each topic is done, commit, then continue.</strong></p>
+<pre><code>git add .
+git commit -m &quot;0 The shelf — The page&quot;</code></pre>
+<p>Use the commit message on the topic you just finished. The report is due Wednesday 21 October 2026, 16:00.</p>
+<hr class='section'>
+<h2>The three projects</h2>
+<p>The class has three projects. You build the one your remainder names. The teaching on the earlier pages is a page that asks and waits. Your project is the system named on Tasks.</p>
+<pre><code>0 The shelf      shelf.html
+                 board: pen, copy, tea, prices empty until Load
+                 till: Loaded, Dearest, Sum, all 0 until Load
+                 Load asks for the three prices in one wait
+                 Loaded 3, Dearest 80, Sum 170
+                 a stopped server blanks the prices and the till
+
+1 The lookup     lookup.html
+                 ask, card, slip, figures
+                 Find pen: card pen 50, one slip row, Times 1
+                 Find pen again: same row, Times 2
+                 Find copy: two rows, Dearest 80
+                 ruler clears the card and leaves the slip
+
+2 The order      order.html
+                 ticket, sheet, takings, Drop last
+                 Send pen and 2: ticket 1, sheet row, Takings 100
+                 Send tea and 1: ticket 2, Takings 140
+                 Drop last removes tea and blanks the ticket
+                 a bad quantity does not send</code></pre>
+<hr class='section'>
+<h2>Schedule</h2>
+<table class='attrs'><tr><th></th><th></th></tr><tr><td>20 min</td><td>The page must not wait. Headings 01–10.</td></tr><tr><td>15 min</td><td>Callbacks. Headings 11–17.</td></tr><tr><td>20 min</td><td>Promises. Headings 18–29.</td></tr><tr><td>15 min</td><td>async and await. Headings 30–37.</td></tr><tr><td>20 min</td><td>The reply. Headings 38–47.</td></tr><tr><td>20 min</td><td>Loading and several asks. Headings 48–62.</td></tr><tr><td>70 min</td><td>Your project. The report is due Wednesday 21 October 2026, 16:00.</td></tr></table>
+<hr class='section'>
+<h2>Contents</h2><ol>
+<li><a href='Lab 06 - The page must not wait.html'>01–10 The page must not wait</a></li>
+<li><a href='Lab 06 - Callbacks.html'>11–17 Callbacks</a></li>
+<li><a href='Lab 06 - Promises.html'>18–29 Promises</a></li>
+<li><a href='Lab 06 - async and await.html'>30–37 async and await</a></li>
+<li><a href='Lab 06 - The reply.html'>38–47 The reply</a></li>
+<li><a href='Lab 06 - Loading and several asks.html'>48–62 Loading and several asks</a></li>
+<li><a href='Lab 06 - Tasks.html'>Tasks</a></li>
+<li><a href='Lab 06 - 0 The shelf.html'>0 The shelf</a></li>
+<li><a href='Lab 06 - 1 The lookup.html'>1 The lookup</a></li>
+<li><a href='Lab 06 - 2 The order.html'>2 The order</a></li>
+</ol>
+</main>
+<nav class="end"><span class="off">Previous</span><a href="Lab 06 - The page must not wait.html">Next · The page must not wait</a></nav>
+</body></html>

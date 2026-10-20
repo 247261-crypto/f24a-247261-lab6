@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Lab 06 — 1 The lookup</title>
+<link rel="stylesheet" href="lab06.css"></head><body>
+<header class="top"><h1>Lab 06 — 1 The lookup</h1><p>BSCS-F24-A · Ali Hafeez</p></header>
+<nav class="top"><a href="Lab 06 - Home.html">Home</a><a href="Lab 06 - The page must not wait.html">The page must not wait</a><a href="Lab 06 - Callbacks.html">Callbacks</a><a href="Lab 06 - Promises.html">Promises</a><a href="Lab 06 - async and await.html">async and await</a><a href="Lab 06 - The reply.html">The reply</a><a href="Lab 06 - Loading and several asks.html">Loading and several asks</a><a href="Lab 06 - Tasks.html">Tasks</a><a href="Lab 06 - 0 The shelf.html">0 The shelf</a><a href="Lab 06 - 1 The lookup.html">1 The lookup</a><a href="Lab 06 - 2 The order.html">2 The order</a></nav>
+<main>
+<p>This is project <strong>1</strong>. You build it when the last digit of your roll, divided by 3, leaves a remainder of 1. Digits 1, 4, and 7.</p>
+<p>A counter at your place. The card, the slip, and the figures are three parts of the same desk. A person writes a name and presses Find. The card shows that item and the price the computer sent. The slip keeps a row for each item the computer knew. A second Find for the same item adds one to Times on that row. It does not add a second row. Found is how many rows are on the slip. Dearest is the greatest price on the slip. Ruler clears the card and leaves the slip as it was. An empty box does not ask, and the card and the slip stay as they were. A stopped computer clears the card and leaves the slip as it was.</p>
+<p>This is <code>lookup.html</code>. Your place and your header colour come from the last digit of your roll. The place name is white.</p>
+<h2>The finished lookup</h2>
+<pre>lookup.html
+  header     your place, your colour, the name in white
+  status     id="status"     one sentence in the file
+  ask        id="item"       button id="find"     Find
+  card       id="card"
+             id="card-name"     empty in the file
+             id="card-price"    empty in the file
+  slip       Item | Price | Times
+             id="slip"          no rows in the file
+  figures    id="found"      starts at 0
+             id="dearest"    starts at 0
+  footer     your roll</pre>
+
+<h2>Topic 1 — The page</h2>
+<ul>
+<li>The page is <code>lookup.html</code> in <code>f24a-YOURROLL-lab6</code>.</li>
+<li>The heading is your place. The header uses your colour. The place name is white. The footer shows your roll.</li>
+<li>Commit with the message <code>1 The lookup — The page</code>.</li>
+</ul>
+
+<h2>Topic 2 — The card</h2>
+<ul>
+<li>The card id is <code>card</code>. The name id is <code>card-name</code>. The price id is <code>card-price</code>. Both are empty in the file.</li>
+<li>Commit with the message <code>1 The lookup — The card</code>.</li>
+</ul>
+
+<h2>Topic 3 — The slip</h2>
+<ul>
+<li>Put a status line on the page. Its id is <code>status</code>. The file contains one sentence in that line.</li>
+<li>The slip headings are Item, Price, and Times. The body id is <code>slip</code>. The file has no rows.</li>
+<li>Found id is <code>found</code> and starts at 0. Dearest id is <code>dearest</code> and starts at 0.</li>
+<li>Commit with the message <code>1 The lookup — The slip</code>.</li>
+</ul>
+
+<h2>Topic 4 — The ask</h2>
+<ul>
+<li>The name box id is <code>item</code>. The button id is <code>find</code>. The words on it are Find.</li>
+<li>Commit with the message <code>1 The lookup — The ask</code>.</li>
+</ul>
+
+<h2>Topic 5 — The server file</h2>
+<ul>
+<li>Copy <code>server.js</code> into this folder. Do not change it.</li>
+<li>Run <code>node server.js</code>. Open <code>http://localhost:3016/lookup.html</code>.</li>
+<li>Commit with the message <code>1 The lookup — The server file</code>.</li>
+</ul>
+
+<h2>Topic 6 — Find is stored</h2>
+<ul>
+<li>The script stores a listener on Find. The line does not call the function. Loading the page leaves the sentence, the card, and the slip as they are in the file.</li>
+<li>Commit with the message <code>1 The lookup — Find is stored</code>.</li>
+</ul>
+
+<h2>Topic 7 — Loading</h2>
+<ul>
+<li>Find sets the status line to Loading… and the button stops taking clicks.</li>
+<li>Commit with the message <code>1 The lookup — Loading</code>.</li>
+</ul>
+
+<h2>Topic 8 — The card fills</h2>
+<ul>
+<li>Find with pen in the box. The status line says pen: Rs 50. The card name is pen. The card price is 50.</li>
+<li>The digits 50, 80, and 40 are not written in <code>lookup.html</code>. They are not written in the page script. They stay inside <code>server.js</code>.</li>
+<li>Commit with the message <code>1 The lookup — The card fills</code>.</li>
+</ul>
+
+<h2>Topic 9 — The first row</h2>
+<ul>
+<li>That same Find puts one row on the slip: pen, 50, 1. Found shows 1. Dearest shows 50.</li>
+<li>Commit with the message <code>1 The lookup — The first row</code>.</li>
+</ul>
+
+<h2>Topic 10 — The same item again</h2>
+<ul>
+<li>Find pen again. The slip still has one row. Times is 2. Found stays 1. Dearest stays 50. The card still shows pen and 50.</li>
+<li>Commit with the message <code>1 The lookup — The same item again</code>.</li>
+</ul>
+
+<h2>Topic 11 — A second item</h2>
+<ul>
+<li>Find copy. The card shows copy and 80. The slip has two rows. Found shows 2. Dearest shows 80.</li>
+<li>Commit with the message <code>1 The lookup — A second item</code>.</li>
+</ul>
+
+<h2>Topic 12 — A name that is not there</h2>
+<ul>
+<li>Find ruler. The status line says ruler is not in the shop. The card name and the card price are blank. The slip stays on two rows. Found stays 2. Dearest stays 80.</li>
+<li>Commit with the message <code>1 The lookup — A name that is not there</code>.</li>
+</ul>
+
+<h2>Topic 13 — An empty box</h2>
+<ul>
+<li>Clear the box and press Find. The status line says undefined. The page does not ask. The slip stays. The card stays blank.</li>
+<li>Commit with the message <code>1 The lookup — An empty box</code>.</li>
+</ul>
+
+<h2>Topic 14 — The computer is off</h2>
+<ul>
+<li>Stop <code>node</code>. Find with pen in the box.</li>
+<li>The status line says The server is not answering. The card is blank. The slip stays on the rows it already had.</li>
+<li>Commit with the message <code>1 The lookup — The computer is off</code>.</li>
+</ul>
+
+<h2>Topic 15 — The button comes back</h2>
+<ul>
+<li>After a card fills, the button takes a click again.</li>
+<li>After ruler, the button takes a click again.</li>
+<li>After the computer is off, the button takes a click again.</li>
+<li>Commit with the message <code>1 The lookup — The button comes back</code>.</li>
+</ul>
+
+<h2>Topic 16 — The sentence in the file</h2>
+<ul>
+<li>Refresh brings that sentence back. The card is empty. The slip is empty. Found is 0. Dearest is 0.</li>
+<li>Commit with the message <code>1 The lookup — The sentence in the file</code>.</li>
+</ul>
+</main>
+<nav class="end"><a href="Lab 06 - 0 The shelf.html">Previous · 0 The shelf</a><a href="Lab 06 - 2 The order.html">Next · 2 The order</a></nav>
+</body></html>

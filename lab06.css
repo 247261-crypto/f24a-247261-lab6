@@ -1,0 +1,32 @@
+:root { --navy: #1a2744; --orange: #c45c26; --bg: #f6f4ef; --card: #fff; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", sans-serif; font-size: 17px; line-height: 1.45; color: #222; background: var(--bg); }
+header.top { background: var(--navy); color: #fff; padding: 1rem 1.5rem; }
+header.top h1 { margin: 0 0 0.25rem; font-size: 1.4rem; }
+header.top p { margin: 0; opacity: 0.9; font-size: 0.95rem; }
+nav.top { display: flex; gap: 1rem; flex-wrap: wrap; padding: 0.6rem 1.5rem; background: #eee; }
+nav.top a { color: var(--navy); font-weight: 600; text-decoration: none; }
+nav.end { display: flex; justify-content: space-between; align-items: center; gap: 1rem; max-width: 52rem; margin: 0 auto; padding: 0 1.5rem 2rem; }
+nav.end a, nav.end .off { display: inline-block; padding: 0.7rem 1.25rem; border-radius: 6px; font-weight: 600; text-decoration: none; }
+nav.end a { background: var(--navy); color: #fff; }
+nav.end a:hover { background: var(--orange); color: #fff; }
+nav.end .off { background: #ddd; color: #888; }
+main { max-width: 52rem; margin: 0 auto; padding: 1.25rem 1.5rem 3rem; }
+h2 { color: var(--navy); border-bottom: 3px solid var(--orange); padding-bottom: 0.25rem; }
+hr.section { border: 0; height: 0; border-top: 4px solid var(--orange); margin: 2.6rem 0 1.8rem; }
+main ul { margin: 0.4rem 0 1rem; padding-left: 1.3rem; }
+main li { margin: 0.25rem 0; }
+.line { margin: 0.35rem 0 0.6rem; }
+pre, code { font-family: Consolas, "Courier New", monospace; }
+pre { background: #1a2744; color: #f4f4f4; padding: 0.8rem 1rem; overflow-x: auto; font-size: 0.88rem; }
+.live { border: 2px dashed var(--navy); background: var(--card); padding: 1rem; margin: 0.5rem 0 1rem; }
+.live > .cap { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--orange); margin: 0 0 0.5rem; }
+.live header { background: navy; color: white; padding: 1rem; }
+.live button { padding: 0.4rem 0.8rem; }
+.tasks { background: #fff8e7; border: 2px solid var(--orange); padding: 1rem 1.2rem; margin-top: 2rem; }
+table.attrs { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+table.attrs th, table.attrs td { border: 1px solid #ccc; padding: 0.4rem 0.5rem; text-align: left; }
+table.attrs th { background: var(--navy); color: #fff; }
+.term { background: #0c0c0c; color: #ccc; border: 1px solid #333; margin: 0.4rem 0 1rem; }
+.term-title { background: #1f1f1f; color: #fff; font-size: 0.8rem; padding: 0.25rem 0.6rem; }
+.term pre { background: #0c0c0c; color: #ccc; margin: 0; }
